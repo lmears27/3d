@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bottle - 3D view</title>
+<meta property="og:title" content="Bottle - 3D view">
+<meta property="og:description" content="Interactive 3D scan. Drag to rotate, pinch or scroll to zoom.">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js"></script>
+<style>
+  :root { --bg: #f4f4f2; --fg: #1d1d1b; --muted: #6b6b66; --card: #ffffff; --line: #deded9; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161615; --fg: #ececea; --muted: #9a9a94; --card: #20201e; --line: #333330; } }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg);
+               font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { display: flex; flex-direction: column; }
+  header { padding: 14px 16px 6px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  h1 { margin: 0; font-size: 20px; font-weight: 650; }
+  .meta { color: var(--muted); font-size: 13px; }
+  model-viewer { flex: 1; width: 100%; min-height: 320px; background: transparent;
+                 --poster-color: transparent; --progress-bar-color: var(--fg); }
+  .bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding: 8px 16px 16px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line);
+           background: var(--card); color: var(--fg); cursor: pointer; }
+  button:hover { border-color: var(--muted); }
+  .hint { text-align: center; color: var(--muted); font-size: 12px; padding: 0 16px 14px; }
+  #ar { display: none; }
+  model-viewer[ar-status] #ar, model-viewer #ar[slot="ar-button"] { display: inline-block; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Bottle</h1>
+  <span class="meta">RealityScan &middot; 180 photos &middot; 12 Nov 2026</span>
+</header>
+<model-viewer id="mv" src="model.glb?v=20261112091151" alt="3D model of Bottle"
+  camera-controls touch-action="pan-y" auto-rotate auto-rotate-delay="1500" rotation-per-second="20deg"
+  shadow-intensity="0.8" shadow-softness="0.9" exposure="1.05" environment-image="neutral"
+  ar ar-modes="webxr scene-viewer quick-look" interaction-prompt="auto">
+  <button id="ar" slot="ar-button">View in your room</button>
+</model-viewer>
+<div class="bar">
+  <button id="spin">Pause spin</button>
+  <button id="reset">Reset view</button>
+  <button id="full">Full screen</button>
+</div>
+<div class="hint">Drag to rotate &middot; scroll or pinch to zoom &middot; right-drag or two fingers to move</div>
+<script>
+  const mv = document.getElementById('mv');
+  const spin = document.getElementById('spin');
+  spin.onclick = () => { mv.autoRotate = !mv.autoRotate; spin.textContent = mv.autoRotate ? 'Pause spin' : 'Spin'; };
+  document.getElementById('reset').onclick = () => { mv.cameraOrbit = 'auto auto auto'; mv.cameraTarget = 'auto auto auto'; mv.fieldOfView = 'auto'; mv.jumpCameraToGoal(); };
+  document.getElementById('full').onclick = () => { const el = document.documentElement; (document.fullscreenElement ? document.exitFullscreen() : el.requestFullscreen && el.requestFullscreen()); };
+</script>
+</body>
+</html>
